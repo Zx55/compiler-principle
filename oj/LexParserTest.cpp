@@ -11,19 +11,20 @@
 using namespace std;
 using namespace Compiler;
 
-const string TEST_FILE_PATH = "cpp/compiler/oj/";
+const string TEST_FILE_PATH = "compiler-principle/oj/test/LexParser/";
 
-int main() {
-    // 流重定向
-    auto in = ifstream(TEST_FILE_PATH + "in.txt");
-    cin.rdbuf(in.rdbuf());
-    //auto out = ofstream((TEST_FILE_PATH + "out.txt");
-    //cout.rdbuf(out.rdbuf());
+void testParser(int no) {
+    const auto outputPath = TEST_FILE_PATH + "l" + to_string(no) + "/out.txt";
+    const auto answerPath = TEST_FILE_PATH + "l" + to_string(no) + "/ans.txt";
 
-    auto analyzer = LexParser();
+    auto inputFile = ifstream(TEST_FILE_PATH + "l" + to_string(no) + "/in.txt");
+    auto outputFile = ofstream(outputPath);
+    auto answerFile = ifstream(answerPath);
+
+    auto parser = LexParser(inputFile);
 
     while (true) {
-        auto result = analyzer.parseNext();
+        auto result = parser.parseNext();
 
         switch (result.symbol) {
             case Symbol::SEOF:
@@ -31,24 +32,31 @@ int main() {
             case Symbol::IDENTIFIER:
             case Symbol::INTEGER:
             case Symbol::INCOMPLETECOMMENT: {
-                cout << result.symbol << ' ';
-                result.info == "" ? (cout << result.num) :
-                    (cout << result.info);
-                cout << endl;
+                outputFile << result.symbol << ' ';
+                result.info == "" ? (outputFile << result.num) :
+                    (outputFile << result.info);
+                outputFile << endl;
                 break;
             }
             case Symbol::COMMENT:
                 break;
             case Symbol::UNDEFINED: {
-                cout << -1 << ' ' << result.info << endl;
+                outputFile << -1 << ' ' << result.info << endl;
                 goto done;
             }
             default: {
-                cout << result.symbol << endl;
+                outputFile << result.symbol << endl;
             }
         }
     }
 
 done:
+    string cmd = "diff " + outputPath + " " + answerPath;
+    system(cmd.c_str());
+}
+
+int main() {
+    testParser(1);
+
     return 0;
 }
