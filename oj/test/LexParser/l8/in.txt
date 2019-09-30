@@ -1,0 +1,148 @@
+/* random */(:	IF;
+BEGIN-	END-/	IFIF
+(
+IF	)	,	:=*	THEN	:	ELSE;:
+/)	END	;
+BEGIN
+BEGIN	BEGIN	ELSE	+
+BEGIN
+:=	);)
+ELSE
+;+
+END
+:	ELSE//-	)	+	:=	:
+;	/
+*	THENEND
+,THEN/BEGINENDBEGIN
+*
+)	ELSE;END	*ELSE	+END	(;
+(:*
+,	*THEN
+ENDIF:=
+END
+IF(;	ELSE-*
+IF
+-+)	,	*
+,	:
+=	;
+IFIF	;	=
+:	IF
+BEGIN
+THEN	THEN	(
+ELSE
+,	=)
+::=	END
+:ELSE
+THEN	=	BEGIN+:,=END;	IFELSE	:	*	;
+;:	ELSE
+(
+)
+=,	ELSE:=(	*
+,
+,-	;	:
+,-	ELSE
+:=)	+
+=BEGIN	:	(THENELSEELSE
+-
+(	,	+/	THEN:	(
+BEGIN	+:=
+,	*	THEN
+-THEN	-
+END	BEGIN	:=
+ELSE	/	IF	:=
+ELSE	(
+-	-	ELSE	ELSE	BEGIN
+:
+END/
+END/+
+;	ELSE-	:	BEGIN
+-	-
+*	/	)IF
+::=	):	:
+,=	IF	;	;BEGIN	,
+-*
+=
+END
+BEGIN
+IF
+/
+:(
+*
+ELSE/
+BEGIN	=	+
+IF,)
+END	/	END	,
+:=THEN	/	:=	)	:
+*	:
+END
+;	BEGIN	+
+-=	;
+(;	;
+-	=	=IF;+	-END
+*	THEN	:	END	*	/	ELSE	-
+IF	)+=	BEGIN-/	THEN	IF
+END,	,IF
+(
+:
+THEN	END,END
+-
+(
+:
+:(	,	:=	IF-	(	BEGIN
+)BEGIN	*
+END	END
+ELSE
+*
+=ELSE
+ELSE
+-	,
+(/END	,	,*ELSE
+;
+=
+()
+/::+:	/	)	=:=	THENBEGIN	*	=	;BEGIN-
+:IF
+-ELSE;	(	BEGIN
+,
+,	=	THEN,=
+END	/
+=
+(	/
+END
+,
+)(=
+THEN	/
+*	=*	ELSE	IF	+
+)	(	THEN	END;
+-	)
+END
+=*	:=*;	-	*	+	=
+THEN	ELSE:=	:
+-	BEGIN	*	*	*	IF	;BEGIN*/IF(	IF	END	THEN:=
+(ELSE:
+END	BEGIN	,:
+)
+(	+	)
+)
+/,	,
+)
+ELSE=	END*
+ELSE
+END	IF
+==	-),END:
+=END
+:=
+)	,
+:THEN	,	THEN
+//+	=-	,*/
+THEN+	)	-=
+(BEGIN
+IF	THEN
+IF	()	BEGIN	;
+*)
+/*
+/+	:	IF
+,
+-)	ELSE
+THENELSEELSE(,	BEGIN
+*	;	:=	)	IF	BEGIN	:	END	/	

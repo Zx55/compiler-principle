@@ -1,0 +1,9 @@
+/* all token */
+BEGIN
+END
+IF
+THEN
+ELSE
+ABCDEFG
+1234567
++-*/(),;::==

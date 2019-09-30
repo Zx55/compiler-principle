@@ -4,9 +4,13 @@
 
     * 词法分析器 `LexParser.h`
 
+        [文法及输入输出](oj/LexParser.md)
+
     * 自动机算法 `Automata.h`
 
         NFA确定化、DFA最小化和DFA等价判定
+
+        [输入输出](oj/Automata.md)
 
     * `oj/test`下包含了一些测试用例
 

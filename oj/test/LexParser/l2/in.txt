@@ -1,0 +1,4 @@
+/* sample program */
+BEGIN
+  a := 1;
+END

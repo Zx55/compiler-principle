@@ -12,6 +12,7 @@ using namespace std;
 using namespace Compiler;
 
 const string TEST_FILE_PATH = "compiler-principle/oj/test/LexParser/";
+const int TEST_FILE = 8;
 
 void testParser(int no) {
     const auto outputPath = TEST_FILE_PATH + "l" + to_string(no) + "/out.txt";
@@ -52,11 +53,23 @@ void testParser(int no) {
 
 done:
     string cmd = "diff " + outputPath + " " + answerPath;
-    system(cmd.c_str());
+    int ans = system(cmd.c_str());
+    cout << "[" << no << "] ";
+    if (ans > 0) {
+        cout << "Test Fail" << endl;
+    } else {
+        cout << "Test Pass" << endl;
+    }
+}
+
+void testAll() {
+    for (int i = 1; i <= TEST_FILE; ++i) {
+        testParser(i);
+    }
 }
 
 int main() {
-    testParser(1);
+    testAll();
 
     return 0;
 }
