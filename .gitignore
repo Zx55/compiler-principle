@@ -1,2 +1,9 @@
 oj/Automata.h
 oj/AutomataTest.cpp
+
+oj/test/**/out.txt
+
+*.out
+**/*.out
+
+**/main.cpp
