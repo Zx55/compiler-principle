@@ -12,9 +12,7 @@
 
         [输入输出](oj/Automata/README.md)
 
-    - [ ] 语法分析器 `Parser/Parser.h`
-
-        其中包含一个简单的词法分析器
+    - [x] 语法分析器(包含一个简单词法分析器) `Parser/Parser.h`
 
         [文法及输入输出](oj/Parser/README.md)
 

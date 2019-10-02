@@ -1,0 +1,6 @@
+IF i           THEN
+    IF(i[((((((((i[i]))))))))])THEN
+        IF(i+i)*i[i] THEN
+            i := i*i[i[(i+i)]]
+        ELSE
+            i[i] := i+i

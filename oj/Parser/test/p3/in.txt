@@ -1,0 +1,9 @@
+IF i THEN
+    i := a+i
+ELSE IF a+i THEN
+    IF c*i THEN
+    	i := c*i
+    ELSE
+    	i[b] := c*i
+ELSE
+    i[b] := a+i

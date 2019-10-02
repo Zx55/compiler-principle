@@ -16,29 +16,29 @@
 namespace Compiler {
     // 类别表
     enum class Symbol {
-        INIT,
-        BEGIN,
-        END,
-        IF,
-        THEN,
-        ELSE,
-        IDENTIFIER = 20,
-        INTEGER,
-        PLUS,
-        MINUS,
-        STAR,
-        DIVIDE,
-        LBRACKET,
-        RBRACKET,
-        COMMA,
-        SEMI,
-        COLON,
-        ASSIGN,
-        EQUAL,
-        COMMENT,
-        SEOF,
-        UNDEFINED,
-        INCOMPLETECOMMENT = -1,
+        BEGIN               = 1,
+        END                 = 2,
+        IF                  = 3,
+        THEN                = 4,
+        ELSE                = 5,
+        IDENTIFIER          = 20,
+        INTEGER             = 21,
+        PLUS                = 22,
+        MINUS               = 23,
+        STAR                = 24,
+        DIVIDE              = 25,
+        LBRACKET            = 26,
+        RBRACKET            = 27,
+        COMMA               = 28,
+        SEMI                = 29,
+        COLON               = 30,
+        ASSIGN              = 31,
+        EQUAL               = 32,
+        COMMENT             = 33,
+        INIT                = 0,
+        SEOF                = -1,
+        UNDEFINED           = -2,
+        INCOMPLETECOMMENT   = -3,
     };
 
     // 重载输出运算符
@@ -80,7 +80,7 @@ namespace Compiler {
     // 词法分析器
     class LexParser {
     private:
-        std::istream &_in;       // 绑定的流 默认是stdin
+        std::istream &_in;  // 绑定的流 默认是stdin
         std::string _token;
         int _ch;
         Symbol _symbol;     // 存储类别 用于异常处理时的返回
@@ -164,69 +164,37 @@ namespace Compiler {
             }
         }
 
-        inline auto isSpace() {
-            return _ch == ' ';
-        }
+        inline auto isSpace() { return _ch == ' '; }
 
-        inline auto isNewLine() {
-            return _ch == '\n' || _ch == '\r';
-        }
+        inline auto isNewLine() { return _ch == '\n' || _ch == '\r'; }
 
-        inline auto isTab() {
-            return _ch == '\t';
-        }
+        inline auto isTab() { return _ch == '\t'; }
 
-        inline auto isBlank() {
-            return isSpace() || isNewLine() || isTab();
-        }
+        inline auto isBlank() { return isSpace() || isNewLine() || isTab(); }
 
-        inline auto isLetter() {
-            return isalpha(_ch);
-        }
+        inline auto isLetter() { return std::isalpha(_ch); }
 
-        inline auto isDigit() {
-            return isdigit(_ch);
-        }
+        inline auto isDigit() { return std::isdigit(_ch); }
 
-        inline auto isColon() {
-            return _ch == ':';
-        }
+        inline auto isColon() { return _ch == ':'; }
 
-        inline auto isComma() {
-            return _ch == ',';
-        }
+        inline auto isComma() { return _ch == ','; }
 
-        inline auto isSemi() {
-            return _ch == ';';
-        }
+        inline auto isSemi() { return _ch == ';'; }
 
-        inline auto isEqu() {
-            return _ch == '=';
-        }
+        inline auto isEqu() { return _ch == '='; }
 
-        inline auto isPlus() {
-            return _ch == '+';
-        }
+        inline auto isPlus() { return _ch == '+'; }
 
-        inline auto isMinus() {
-            return _ch == '-';
-        }
+        inline auto isMinus() { return _ch == '-'; }
 
-        inline auto isDivide() {
-            return _ch == '/';
-        }
+        inline auto isDivide() { return _ch == '/'; }
 
-        inline auto isStar() {
-            return _ch == '*';
-        }
+        inline auto isStar() { return _ch == '*'; }
 
-        inline auto isLBracket() {
-            return _ch == '(';
-        }
+        inline auto isLBracket() { return _ch == '('; }
 
-        inline auto isRBracket() {
-            return _ch == ')';
-        }
+        inline auto isRBracket() { return _ch == ')'; }
 
     public:
         LexParser(std::istream &in = std::cin): _in(in) { }
@@ -322,7 +290,7 @@ namespace Compiler {
 
                 else {
                     _symbol = Symbol::UNDEFINED;
-                    catToken();
+                    _token += _ch;
                 }
 
                 return makeResult();
