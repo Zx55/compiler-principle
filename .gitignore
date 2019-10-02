@@ -1,9 +1,9 @@
-oj/Automata.h
-oj/AutomataTest.cpp
+oj/**/test/**/out.txt
+oj/**/*.cpp
+!oj/**/*Test.cpp
 
-oj/test/**/out.txt
+oj/Automata/Automata.h
+oj/Automata/AutomataTest.cpp
 
 *.out
 **/*.out
-
-**/main.cpp

@@ -2,17 +2,23 @@
 
 * `oj/`包含了在OJ上实现的一些算法(**!!c++17实现!!**)，包括
 
-    * 词法分析器 `LexParser.h`
+    - [x] 词法分析器 `LexParser/LexParser.h`
 
-        [文法及输入输出](oj/LexParser.md)
+        [文法及输入输出](oj/LexParser/README.md)
 
-    * 自动机算法 `Automata.h`
+    - [x] 自动机算法 `Automata/Automata.h`
 
         NFA确定化、DFA最小化和DFA等价判定
 
-        [输入输出](oj/Automata.md)
+        [输入输出](oj/Automata/README.md)
 
-    * `oj/test`下包含了一些测试用例
+    - [ ] 语法分析器 `Parser/Parser.h`
+
+        其中包含一个简单的词法分析器
+
+        [文法及输入输出](oj/Parser/README.md)
+
+    - [ ] 语义分析器
 
 * `lab/`包含了实验上机的一个mini c0编译器
 

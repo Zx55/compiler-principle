@@ -11,7 +11,7 @@
 using namespace std;
 using namespace Compiler;
 
-const string TEST_FILE_PATH = "compiler-principle/oj/test/LexParser/";
+const string TEST_FILE_PATH = "compiler-principle/oj/LexParser/test/";
 const int TEST_FILE = 8;
 
 void testParser(int no) {
