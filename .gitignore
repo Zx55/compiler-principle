@@ -6,8 +6,6 @@ oj/**/test/**/out.txt
 
 oj/Automata/Automata.h
 oj/Automata/AutomataTest.cpp
-oj/Parser/Parser.h
-oj/Parser/ParserTest.cpp
 
 *.out
 **/*.out

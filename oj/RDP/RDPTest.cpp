@@ -1,6 +1,6 @@
 /*
  * RDPTest.cpp
- * RDP测试
+ * Test of RDP.
  * Copyright (c) zx5. All rights reserved.
  */
 

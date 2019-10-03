@@ -1,4 +1,4 @@
-# 编译原理课程资源整理
+# Archive of Compiler 2019 in BUAA
 
 * `oj/` includes some algorithms (**!!require c++17!!**)
 

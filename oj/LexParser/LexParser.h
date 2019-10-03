@@ -1,6 +1,6 @@
 /*
  * LexParser.h
- * 词法分析器 文法见书P56
+ * Implemention of Lexical Parser.
  * Copyright (c) zx5. All rights reserved.
  */
 

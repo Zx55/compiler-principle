@@ -1,6 +1,6 @@
 /*
  * LexParserTest.cpp
- * 词法分析器测试
+ * Test of LexParser.
  * Copyright (c) zx5. All rights reserved.
  */
 

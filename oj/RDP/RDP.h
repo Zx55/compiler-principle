@@ -1,6 +1,6 @@
 /*
  * RDP.h
- * Implement of Recursive Descent Parser
+ * Implemention of Recursive Descent Parser.
  * Copyright (c) zx5. All rights reserved.
  */
 
