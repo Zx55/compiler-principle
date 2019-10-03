@@ -1,25 +1,25 @@
 # 编译原理课程资源整理
 
-* `oj/`包含了在OJ上实现的一些算法(**!!c++17实现!!**)，包括
+* `oj/` includes some algorithms (**!!require c++17!!**)
 
-    - [x] 词法分析器 `LexParser/LexParser.h`
+    - [x] [Lexical Parser](oj/LexParser/LexParser.h)
 
-        [文法及输入输出](oj/LexParser/README.md)
+        [Gammar and I/O](oj/LexParser/README.md)
 
-    - [x] 自动机算法 `Automata/Automata.h`
+    - [x] Automata (NFA/DFA)
 
-        NFA确定化、DFA最小化和DFA等价判定
+        [I/O](oj/Automata/README.md)
 
-        [输入输出](oj/Automata/README.md)
+    - [ ] Syntactic Parser
 
-    - [x] 语法分析器(包含一个简单词法分析器) `Parser/Parser.h`
+        - [x] [Recursive Descent Parser](oj/RDP/RDP.h)
 
-        [文法及输入输出](oj/Parser/README.md)
+            [Gammar and I/O](oj/Parser/README.md)
 
-    - [ ] 语义分析器
+        - [ ] Operator Precedence Parser
 
-* `lab/`包含了实验上机的一个mini c0编译器
+* `lab/` includes a mini c0 compiler in lab
 
-* 大作业c0编译器[仓库](https://github.com/Zx55/c0-compiler)
+* Final Project [c0-compiler](https://github.com/Zx55/c0-compiler)
 
-    基于Typescript + React + Antd实现
+    Based on `Typescript` + `React` + `Antd`
