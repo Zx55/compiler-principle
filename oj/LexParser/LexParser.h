@@ -36,9 +36,9 @@ namespace Compiler {
         EQUAL               = 32,
         COMMENT             = 33,
         INIT                = 0,
-        SEOF                = -1,
-        UNDEFINED           = -2,
-        INCOMPLETECOMMENT   = -3,
+        INCOMPLETECOMMENT   = -1,
+        SEOF                = -2,
+        UNDEFINED           = -3,
     };
 
     // 重载输出运算符

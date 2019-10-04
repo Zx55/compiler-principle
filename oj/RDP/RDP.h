@@ -4,6 +4,9 @@
  * Copyright (c) zx5. All rights reserved.
  */
 
+#ifndef __COMPILER_RDP_
+#define __COMPILER_RDP_
+
 #include <iostream>
 #include <string>
 #include <unordered_map>
@@ -269,3 +272,5 @@ namespace Compiler {
         }
     };
 }
+
+#endif
