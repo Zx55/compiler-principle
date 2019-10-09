@@ -12,6 +12,8 @@
 #include <unordered_map>
 #include <cctype>
 #include <utility>
+#include <variant>
+#include <optional>
 
 namespace Compiler {
     // 类别表
@@ -61,25 +63,33 @@ namespace Compiler {
         // 类别
         Symbol symbol;
         // 附加信息
-        std::string info;
-        // 无符号整数的数值表示
-        int num;
+        // 未定义的标识符和不完整的评论 -> string
+        // 无符号整数 -> int
+        std::optional<std::variant<std::string, int> > info;
 
         ParseResult(Symbol _symbol):
-            symbol(_symbol), info(""), num(0) { }
-        ParseResult(Symbol _symbol, std::string _info):
-            symbol(_symbol), info(_info), num(0) { }
+            symbol(_symbol), info(std::nullopt) { }
+        ParseResult(Symbol _symbol, std::string _str):
+            symbol(_symbol), info(std::make_optional(_str)) { }
         ParseResult(Symbol _symbol, int _num):
-            symbol(_symbol), info(""), num(_num) { }
+            symbol(_symbol), info(std::make_optional(_num)) { }
         ~ParseResult() { }
-    };
 
-    // 读入EOF抛出的异常
-    class EOFException { };
+        auto getMsg() {
+            return std::get<std::string>(info.value());
+        }
+
+        auto getNum() {
+            return std::get<int>(info.value());
+        }
+    };
 
     // 词法分析器
     class LexParser {
     private:
+        // 读入EOF抛出的异常
+        class _EOFException { };
+
         std::istream &_in;  // 绑定的流 默认是stdin
         std::string _token;
         int _ch;
@@ -92,9 +102,8 @@ namespace Compiler {
 
         // 读取字符 遇到EOF抛出异常
         inline void getChar() {
-            _ch = _in.get();
-            if (_in.eof()) {
-                throw EOFException();
+            if (_ch = _in.get(); _in.eof()) {
+                throw _EOFException();
             }
         }
 
@@ -103,15 +112,13 @@ namespace Compiler {
         }
 
         // 判断保留字
-        inline Symbol checkReserved() {
-            auto res = reserved.find(_token);
-
-            if (res == reserved.end()) {
+        inline void checkReserved() {
+            if (auto res = reserved.find(_token); res == reserved.end()) {
                 // 标识符
-                return Symbol::IDENTIFIER;
+                _symbol = Symbol::IDENTIFIER;
             } else {
                 // 保留字
-                return res->second;
+                _symbol = res->second;
             }
         }
 
@@ -121,17 +128,17 @@ namespace Compiler {
         }
 
         // 使用std::stoi判断是否溢出
-        inline std::pair<bool, int> checkOverFlow() {
+        inline std::optional<int> parseInteger() {
             try {
                 int num = std::stoi(_token);
-                return { false, num };
+                return std::make_optional<int>(num);
             } catch (std::out_of_range &e) {
-                return { true, 0 };
+                return std::nullopt;
             }
         }
 
         // 返回分析结果
-        inline ParseResult makeResult() {
+        inline ParseResult makeResult() noexcept {
             switch (_symbol) {
                 case Symbol::INIT: {
                     // 当流一开始就指向文件尾 返回EOF
@@ -142,18 +149,16 @@ namespace Compiler {
                 }
                 case Symbol::IDENTIFIER: {
                     // 判断是否保留字
-                    _symbol = checkReserved();
-                    if (_symbol == Symbol::IDENTIFIER) {
+                    if (checkReserved(); _symbol == Symbol::IDENTIFIER) {
                         return { _symbol, _token };
                     }
                     return { _symbol };
                 }
                 case Symbol::INTEGER: {
-                    auto overFlowInfo = checkOverFlow();
-                    if (overFlowInfo.first) {
-                        return { _symbol, "OF" };
+                    if (auto res = parseInteger(); res.has_value()) {
+                        return { _symbol, res.value() };
                     }
-                    return { _symbol, overFlowInfo.second };
+                    return { _symbol, "OF" };
                 }
                 case Symbol::INCOMPLETECOMMENT:
                     return { _symbol, "incomplete comment" };
@@ -228,9 +233,8 @@ namespace Compiler {
 
                 else if (isColon()) {
                     _symbol = Symbol::COLON;
-                    getChar();
 
-                    if (isEqu()) {
+                    if (getChar(); isEqu()) {
                         _symbol = Symbol::ASSIGN;
                     } else {
                         ungetChar();
@@ -277,8 +281,7 @@ namespace Compiler {
                                 getChar();
                             } while (!isStar());
                             do {
-                                getChar();
-                                if (isDivide()) {
+                                if (getChar(); isDivide()) {
                                     return { Symbol::COMMENT };
                                 }
                             } while (isStar());
@@ -294,7 +297,7 @@ namespace Compiler {
                 }
 
                 return makeResult();
-            } catch (EOFException &e) {
+            } catch (_EOFException &e) {
                 return makeResult();
             }
         }

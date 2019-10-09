@@ -66,9 +66,7 @@ namespace Automata {
 
             // 这里state是一个pair<string, _State>
             // first是状态名 second是对应的状态State数据结构
-            for (const auto &state: rhs) {
-                const auto &[ sname, sstate ] = state;
-
+            for (const auto &[ sname, sstate ]: rhs) {
                 if (sname == "") {
                     continue;
                 }
@@ -80,16 +78,14 @@ namespace Automata {
 
             ss.str("");
             ss.clear();
-            for (const auto &state: rhs) {
-                if (const auto &[ sname, sstate ] = state; sstate._isEnd) {
+            for (const auto &[ sname, sstate ]: rhs) {
+                if (sstate._isEnd) {
                     ss << sname << " ";
                 }
             }
             out << ss.str().substr(0, ss.str().size() - 1) << std::endl;
 
-            for (const auto &state: rhs) {
-                const auto &[ sname, sstate ] = state;
-
+            for (const auto &[ sname, sstate ]: rhs) {
                 if (sname == "") {
                     continue;
                 }
@@ -251,9 +247,7 @@ namespace Automata {
             _endNum = 0;
             _transNum = 0;
 
-            for (const auto &state: _automata) {
-                const auto &[ sname, sstate ] = state;
-
+            for (const auto &[ sname, sstate ]: _automata) {
                 if (sstate._isEnd) {
                     ++_endNum;
                 }
@@ -310,9 +304,7 @@ namespace Automata {
 
             // 这里先遍历选出要删除的key 再通过key删除
             // 虽然通过迭代器一边遍历一边删除也可以 但是比较麻烦 而且也写出了点问题 orz
-            for (const auto &state: _automata) {
-                const auto &[ sname, sstate ] = state;
-
+            for (const auto &[ sname, sstate ]: _automata) {
                 if (sname == "") {
                     continue;
                 }
@@ -356,9 +348,7 @@ namespace Automata {
             // 根据终点和非终点划分
             auto ends = _StateSet();
             auto endsComp = _StateSet();
-            for (const auto &state: _automata) {
-                const auto &[ sname, sstate ] = state;
-
+            for (const auto &[ sname, sstate ]: _automata) {
                 if (sname == "") {
                     continue;
                 }
@@ -425,9 +415,7 @@ namespace Automata {
             // 根据重新分组后的映射state2Group构造DFA
             auto res = DFA();
 
-            for (const auto &group: state2Group) {
-                const auto &[gname, gid] = group;
-
+            for (const auto &[gname, gid]: state2Group) {
                 if (gname == "") {
                     continue;
                 }
@@ -517,16 +505,14 @@ namespace Automata {
 
             ss.str("");
             ss.clear();
-            for (const auto &state: rhs) {
-                if (const auto &[sname, sstate] = state; sstate._isEnd) {
+            for (const auto &[sname, sstate]: rhs) {
+                if (sstate._isEnd) {
                     ss << sname << " ";
                 }
             }
             out << ss.str().substr(0, ss.str().size() - 1) << std::endl;
 
-            for (const auto &fromState: rhs) {
-                const auto &[fromSname, fromSstate] = fromState;
-
+            for (const auto &[fromSname, fromSstate]: rhs) {
                 if (fromSname == "") {
                     continue;
                 }

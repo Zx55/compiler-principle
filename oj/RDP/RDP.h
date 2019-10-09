@@ -109,8 +109,7 @@ namespace Compiler {
                     } while (_isAlpha());
                     _unget();
 
-                    auto it = reserved.find(_token);
-                    if (it != reserved.end()) {
+                    if (auto it = reserved.find(_token); it != reserved.end()) {
                         _symbol = it->second;
                     }
                 }
@@ -141,8 +140,8 @@ namespace Compiler {
 
                 else if (_isColon()) {
                     _symbol = Symbol::UNDEFINED;
-                    _get();
-                    if (_isEqu()) {
+
+                    if (_get(); _isEqu()) {
                         _symbol = Symbol::ASSIGN;
                     } else {
                         _unget();
@@ -160,8 +159,7 @@ namespace Compiler {
                         break;
                     }
                     case Symbol::IDENTIFIER: {
-                        auto it = reserved.find(_token);
-                        if (it != reserved.end()) {
+                        if (auto it = reserved.find(_token); it != reserved.end()) {
                             _symbol = it->second;
                         }
                         break;
@@ -184,8 +182,7 @@ namespace Compiler {
                 }
                 return false;
             } else if (_symbol == Symbol::IF) {
-                _lex._next();
-                if (_isExpr() && _symbol == Symbol::THEN) {
+                if (_lex._next(); _isExpr() && _symbol == Symbol::THEN) {
                     _lex._next();
                     if (_isStatement()) {
                         if (_symbol == Symbol::ELSE) {
@@ -205,8 +202,7 @@ namespace Compiler {
         bool _isExpr() {
             if (_isTerm()) {
                 while (_symbol == Symbol::PLUS) {
-                    _lex._next();
-                    if (!_isTerm()) {
+                    if (_lex._next(); !_isTerm()) {
                         return false;
                     }
                 }
@@ -219,8 +215,7 @@ namespace Compiler {
         bool _isTerm() {
             if (_isFactor()) {
                 while (_symbol == Symbol::MULTI) {
-                    _lex._next();
-                    if (!_isFactor()) {
+                    if (_lex._next(); !_isFactor()) {
                         return false;
                     }
                 }
@@ -234,8 +229,7 @@ namespace Compiler {
             if (_isVar()) {
                 return true;
             } else if (_symbol == Symbol::LPARENT) {
-                _lex._next();
-                if (_isExpr() && _symbol == Symbol::RPARENT) {
+                if (_lex._next(); _isExpr() && _symbol == Symbol::RPARENT) {
                     _lex._next();
                     return true;
                 }
@@ -247,10 +241,8 @@ namespace Compiler {
 
         bool _isVar() {
             if (_symbol == Symbol::IDENTIFIER) {
-                _lex._next();
-                if (_symbol == Symbol::LBRACKET) {
-                    _lex._next();
-                    if (_isExpr() && _symbol == Symbol::RBRACKET) {
+                if (_lex._next(); _symbol == Symbol::LBRACKET) {
+                    if (_lex._next(); _isExpr() && _symbol == Symbol::RBRACKET) {
                         _lex._next();
                         return true;
                     }

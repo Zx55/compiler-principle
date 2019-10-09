@@ -26,24 +26,22 @@ string parse(int no) {
     ostringstream ss;
 
     while (true) {
-        auto result = parser.parseNext();
-
-        switch (result.symbol) {
+        switch (auto result = parser.parseNext(); result.symbol) {
             case Symbol::SEOF:
                 goto done;
             case Symbol::IDENTIFIER:
             case Symbol::INTEGER:
             case Symbol::INCOMPLETECOMMENT: {
                 ss << result.symbol << ' ';
-                result.info == "" ? (ss << result.num) :
-                    (ss << result.info);
+                holds_alternative<int>(result.info.value()) ?
+                    (ss << result.getNum()) : (ss << result.getMsg());
                 ss << '\n';
                 break;
             }
             case Symbol::COMMENT:
                 break;
             case Symbol::UNDEFINED: {
-                ss << -1 << ' ' << result.info << '\n';
+                ss << -1 << ' ' << result.getMsg() << '\n';
                 goto done;
             }
             default: {
