@@ -4,7 +4,5 @@ oj/**/test/**/out.txt
 !oj/**/test/**/in.txt
 !oj/**/*Test.cpp
 
-oj/Automata/Automata.h
-
 *.out
 **/*.out
