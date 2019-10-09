@@ -65,12 +65,14 @@ namespace Automata {
             std::stringstream ss;
 
             // 这里state是一个pair<string, _State>
-            // first是状态名 second是对应的转移矩阵
+            // first是状态名 second是对应的状态State数据结构
             for (const auto &state: rhs) {
-                if (state.first == "") {
+                const auto &[ sname, sstate ] = state;
+
+                if (sname == "") {
                     continue;
                 }
-                ss << state.first << " ";
+                ss << sname << " ";
             }
             out << ss.str().substr(0, ss.str().size() - 1) << std::endl;
 
@@ -79,21 +81,23 @@ namespace Automata {
             ss.str("");
             ss.clear();
             for (const auto &state: rhs) {
-                if (state.second._isEnd) {
-                    ss << state.first << " ";
+                if (const auto &[ sname, sstate ] = state; sstate._isEnd) {
+                    ss << sname << " ";
                 }
             }
             out << ss.str().substr(0, ss.str().size() - 1) << std::endl;
 
             for (const auto &state: rhs) {
-                if (state.first == "") {
+                const auto &[ sname, sstate ] = state;
+
+                if (sname == "") {
                     continue;
                 }
 
                 for (const auto ch: rhs._charSet) {
-                    if (state.second._transform[ch] != "") {
-                        out << state.first << " \"" << ch << "\" "
-                            << state.second._transform[ch] << std::endl;
+                    if (sstate._transform[ch] != "") {
+                        out << sname << " \"" << ch << "\" "
+                            << sstate._transform[ch] << std::endl;
                     }
                 }
             }
@@ -248,12 +252,14 @@ namespace Automata {
             _transNum = 0;
 
             for (const auto &state: _automata) {
-                if (state.second._isEnd) {
+                const auto &[ sname, sstate ] = state;
+
+                if (sstate._isEnd) {
                     ++_endNum;
                 }
 
                 for (const auto ch: _charSet) {
-                    auto next = _automata[state.first]._transform[ch];
+                    auto next = _automata[sname]._transform[ch];
                     if (next == "") {
                         continue;
                     }
@@ -305,12 +311,14 @@ namespace Automata {
             // 这里先遍历选出要删除的key 再通过key删除
             // 虽然通过迭代器一边遍历一边删除也可以 但是比较麻烦 而且也写出了点问题 orz
             for (const auto &state: _automata) {
-                if (state.first == "") {
+                const auto &[ sname, sstate ] = state;
+
+                if (sname == "") {
                     continue;
                 }
 
-                if (vis.find(state.first) == vis.end()) {
-                    visComp.insert(state.first);
+                if (vis.find(sname) == vis.end()) {
+                    visComp.insert(sname);
                 }
             }
 
@@ -349,20 +357,21 @@ namespace Automata {
             auto ends = _StateSet();
             auto endsComp = _StateSet();
             for (const auto &state: _automata) {
-                if (state.first == "") {
+                const auto &[ sname, sstate ] = state;
+
+                if (sname == "") {
                     continue;
                 }
 
-                state2Group[state.first] = state.second._isEnd ? 1 : 2;
-                if (state.second._isEnd) {
-                    ends.insert(state.first);
+                state2Group[sname] = sstate._isEnd ? 1 : 2;
+                if (sstate._isEnd) {
+                    ends.insert(sname);
                 } else {
-                    endsComp.insert(state.first);
+                    endsComp.insert(sname);
                     maxGroup = 2;
                 }
             }
-            q.push_back(ends);
-            if (maxGroup == 2) {
+            if (q.push_back(ends); maxGroup == 2) {
                 q.push_back(endsComp);
             }
 
@@ -417,15 +426,17 @@ namespace Automata {
             auto res = DFA();
 
             for (const auto &group: state2Group) {
-                if (group.first == "") {
+                const auto &[gname, gid] = group;
+
+                if (gname == "") {
                     continue;
                 }
 
                 // 为了从"s0"开始命名 因此要-1
-                auto newState = "s" + std::to_string(group.second - 1);
-                res._automata[newState]._isEnd = _automata[group.first]._isEnd;
+                auto newState = "s" + std::to_string(gid - 1);
+                res._automata[newState]._isEnd = _automata[gname]._isEnd;
                 for (const auto ch: _charSet) {
-                    auto next = _automata[group.first]._transform[ch];
+                    auto next = _automata[gname]._transform[ch];
                     if (next == "") {
                         continue;
                     }
@@ -475,9 +486,8 @@ namespace Automata {
 
             for (int i = 0; i < rhs._transNum; ++i) {
                 std::string state1, input, state2;
-                in >> state1 >> input >> state2;
 
-                if (input == "\"\"") {
+                if (in >> state1 >> input >> state2; input == "\"\"") {
                     rhs._automata[state1]._transform[0].insert(state2);
                 } else {
                     rhs._automata[state1]._transform[input[1]].insert(state2);
@@ -494,10 +504,12 @@ namespace Automata {
 
             std::stringstream ss;
             for (const auto &state: rhs) {
-                if (state.first == "") {
+                const auto &[sname, sstate] = state;
+
+                if (sname == "") {
                     continue;
                 }
-                ss << state.first << " ";
+                ss << sname << " ";
             }
             out << ss.str().substr(0, ss.str().size() - 1) << std::endl;
 
@@ -506,35 +518,37 @@ namespace Automata {
             ss.str("");
             ss.clear();
             for (const auto &state: rhs) {
-                if (state.second._isEnd) {
-                    ss << state.first << " ";
+                if (const auto &[sname, sstate] = state; sstate._isEnd) {
+                    ss << sname << " ";
                 }
             }
             out << ss.str().substr(0, ss.str().size() - 1) << std::endl;
 
             for (const auto &fromState: rhs) {
-                if (fromState.first == "") {
+                const auto &[fromSname, fromSstate] = fromState;
+
+                if (fromSname == "") {
                     continue;
                 }
 
-                auto t = fromState.second._transform[0];
+                auto t = fromSstate._transform[0];
                 if (t.size() > 1) {
                     for (const auto &toState: t) {
                         if (toState == "") {
                             continue;
                         }
-                        out << fromState.first << " \"\" " << toState << std::endl;
+                        out << fromSname << " \"\" " << toState << std::endl;
                     }
                 }
 
                 for (const auto ch: rhs._charSet) {
-                    t = fromState.second._transform[ch];
+                    t = fromSstate._transform[ch];
                     if (t.size() > 1) {
                         for (const auto &toState: t) {
                             if (toState == "") {
                                 continue;
                             }
-                            out << fromState.first << " \"" << toState
+                            out << fromSname << " \"" << toState
                                 << "\" " << toState << std::endl;
                         }
                     }
@@ -580,8 +594,7 @@ namespace Automata {
             std::unordered_set<std::string> &vis) {
             vis.insert(fromState);
 
-            auto t = _automata[fromState]._transform[0];
-            if (t.size() > 1) {
+            if (auto t = _automata[fromState]._transform[0]; t.size() > 1) {
                 for (const auto &toState: t) {
                     if (toState == "") {
                         continue;
@@ -615,8 +628,7 @@ namespace Automata {
             auto res = _Closure();
 
             for (const auto &fromState: c) {
-                auto next = _automata[fromState]._transform[ch];
-                if (next.size() > 1) {
+                if (auto next = _automata[fromState]._transform[ch]; next.size() > 1) {
                     for (const auto &toState: next) {
                         if (toState == "") {
                             continue;
@@ -697,9 +709,7 @@ namespace Automata {
                 }
 
                 for (const auto ch: _charSet) {
-                    auto move_c = _move(c, ch);
-
-                    if (!move_c.empty()) {
+                    if (auto move_c = _move(c, ch); !move_c.empty()) {
                         res._charSet.insert(ch);
 
                         auto findRes = map.find(move_c);
