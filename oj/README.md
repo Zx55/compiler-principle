@@ -4,7 +4,7 @@
 
     [Gammar and I/O](LexParser/README.md)
 
-- [x] Automata (NFA/DFA)
+- [x] [Automata](Automata/Automata.h) (NFA/DFA)
 
     [I/O](Automata/README.md)
 

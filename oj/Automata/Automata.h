@@ -11,7 +11,8 @@
 #include <sstream>
 #include <string>
 #include <vector>
-#include <deque>
+#include <list>
+#include <queue>
 #include <unordered_map>
 #include <set>
 #include <unordered_set>
@@ -143,10 +144,9 @@ namespace Automata {
         struct _StateSet {
             std::set<std::string> _set;
             // 该集合中的所有状态是否转移到相同的状态集
-            bool _flag;
 
-            _StateSet(bool flag = false): _flag(flag) { }
-            ~_StateSet() { }
+            _StateSet() = default;
+            ~_StateSet() = default;
 
             // 封装了_set的一些函数
             auto begin() {
@@ -322,21 +322,19 @@ namespace Automata {
         }
 
         /* DFA最小化: 模拟分割法
-         * 1. 将状态集分为状态集和非终态集 并放入一个队列q
+         * 1. 将状态集分为状态集和非终态集 并放入一个链表q
          * 2. 不断循环 根据集合中每个状态的不同转移状态对q中的集合进行分割
-         * 2. 分割后的集合若只有一个元素 => 移出队列
-         *    否则将分割后的状态集放回队列 并重新编号
-         * 3. 满足下面其中一个条件算跳出循环
-         *    (i)  队列为空
-         *    (ii) 队列中的每一个状态集都满足: 其中的所有状态的转移状态都是相同的
+         * 2. 分割后的集合若大于一个元素 => 重新编号后放回链表尾端
+         * 3. 满足下面条件时跳出循环：
+         *    链表中所有节点都不可再分
          * 4. 根据重新映射构建最小的DFA
          */
         DFA minimize() {
             // 先去除不可达状态
             removeRedundancy();
 
-            // 队列q
-            auto q = std::deque<_StateSet>();
+            // 链表q
+            auto q = std::list<_StateSet>();
 
             // 映射map: 原先的状态名 → 重新分组后的编号
             auto state2Group = std::unordered_map<std::string, int>();
@@ -344,6 +342,9 @@ namespace Automata {
             auto maxGroup = 1;
             // 孤岛状态即不可接受状态 编号0
             state2Group[""] = 0;
+            // 根据集合中的每个状态的转移进行分组
+            // 方法是计算每种状态的hash
+            auto hashGroup = std::unordered_map<std::size_t, _StateSet>();
 
             // 根据终点和非终点划分
             auto ends = _StateSet();
@@ -365,53 +366,42 @@ namespace Automata {
                 q.push_back(endsComp);
             }
 
-            while (!q.empty()) {
-                auto s = q.front(); q.pop_front();
+            do {
+                for (auto it = q.cbegin(); it != q.cend(); ++it) {
+                    hashGroup.clear();
+                    auto s = *it;
 
-                // 移出只有一个状态的集合
-                if (s.size() == 1) {
-                    continue;
-                }
+                    // 根据hash分组
+                    for (const auto &state: s) {
+                        auto thisHash = _hash(state, state2Group);
+                        hashGroup[thisHash].insert(state);
+                    }
 
-                // 根据集合中的每个状态的转移进行分组
-                // 方法是计算每种状态的hash
-                auto hashGroup = std::unordered_map<std::size_t, _StateSet>();
-                for (const auto &state: s) {
-                    auto thisHash = _hash(state, state2Group);
-                    hashGroup[thisHash].insert(state);
-                }
-
-                // 若集合中的所有状态只有一种转移状态 将flag进行置位
-                if (hashGroup.size() == 1) {
-                    hashGroup.begin()->second._flag = true;
-                }
-
-                // 1. 将分割后的集合放回队列q
-                // 2. 根据分组情况对集合中的每个状态进行重新编号
-                //    第一组编号不变 之后的组根据maxGroup编号
-                auto it = hashGroup.begin();
-                for (q.push_back(it->second), ++it; it != hashGroup.end(); ++it) {
-                    ++maxGroup;
-                    auto ss = it->second;
-
-                    q.push_back(ss);
-                    for (const auto &state: ss) {
-                        state2Group[state] = maxGroup;
+                    // 1. 若集合可以至少分成两组
+                    //    将分组后的集合重新编号后放到链表q的尾端 并从头开始扫描
+                    //    第一组编号不变 之后的组根据maxGroup编号
+                    // 2. 若集合只有一组
+                    //    继续扫描链表中的下一个节点
+                    if (hashGroup.size() > 1) {
+                        q.erase(it);
+                        break;
                     }
                 }
 
-                // 当满足下面的条件时跳出循环:
-                // 队列中的每一个状态集都满足: 其中的所有状态的转移状态都是相同的
-                bool flag = true;
-                for (const auto &ss: q) {
-                    flag &= ss._flag;
-                }
-                if (flag) {
-                    goto done;
-                }
-            }
+                if (hashGroup.size() > 1) {
+                    auto it = hashGroup.begin();
+                    for (q.push_back(it->second), ++it; it != hashGroup.end(); ++it) {
+                        ++maxGroup;
+                        auto ss = it->second;
 
-        done:
+                        q.push_back(ss);
+                        for (const auto &state: ss) {
+                            state2Group[state] = maxGroup;
+                        }
+                    }
+                }
+            } while (hashGroup.size() != 1);
+
             // 根据重新分组后的映射state2Group构造DFA
             auto res = DFA();
 
@@ -666,7 +656,7 @@ namespace Automata {
             res._start = "s0";
             res._automata[""] = DFA::_State(false);
 
-            auto q = std::deque<_Closure>();
+            auto q = std::queue<_Closure>();
             auto vis = std::unordered_set<_Closure, _hash>();
 
             // 映射map: 闭包 → 重新编号
@@ -676,7 +666,7 @@ namespace Automata {
 
             auto start = _Closure({ _start });
             auto startC = _closure(start);
-            q.push_back(startC);
+            q.push(startC);
             vis.insert(startC);
 
             // 开始闭包映射为0
@@ -684,7 +674,7 @@ namespace Automata {
             res._stateNum++;
 
             while (!q.empty()) {
-                auto c = q.front(); q.pop_front();
+                auto c = q.front(); q.pop();
 
                 // 带有终态的闭包 作为映射后 DFA的终态
                 if (_isEnd(c)) {
@@ -711,7 +701,7 @@ namespace Automata {
 
                         if (vis.find(move_c) == vis.end()) {
                             vis.insert(move_c);
-                            q.push_back(move_c);
+                            q.push(move_c);
                         }
                     }
                 }
