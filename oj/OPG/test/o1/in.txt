@@ -13,5 +13,6 @@ T->F*F
 T->F
 F->(E)
 F->i
-1
+2
 i+i*i+i/i
+ii

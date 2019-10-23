@@ -13,6 +13,7 @@
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
+#include <optional>
 
 namespace Compiler {
     using Symbol = char;
@@ -29,11 +30,11 @@ namespace Compiler {
         ERROR,
     };
 
+    template<typename T>
+    using Matrix = std::vector<std::vector<T>>;
+
     // 算符优先文法
     class OPG {
-        template<typename T>
-        using Matrix = std::vector<std::vector<T>>;
-
         // IO
         friend std::istream& operator>>(std::istream& in, OPG &rhs) {
             Symbol ch;
@@ -90,7 +91,7 @@ namespace Compiler {
 
     private:
         struct _Hash {
-            std::size_t operator() (const vector<Symbol> &v) const {
+            std::size_t operator() (const std::vector<Symbol> &v) const {
                 return std::hash<char>{}(v[0]) & std::hash<char>{}(v[v.size() - 1]);
             }
         };
@@ -249,8 +250,8 @@ namespace Compiler {
             return precedence;
         }
 
-        Unified getUnifiedRules() {
-            return _unified;
+        bool hasUnifiedRule(std::vector<Symbol> rule) {
+            return _unified.find(rule) != _unified.end();
         }
     };
 
@@ -262,6 +263,11 @@ namespace Compiler {
         // 每一个句子都是一个输入字符流
         std::stringstream _in;
         Symbol _symbol;
+        Matrix<Precedence> _precedence;
+        // 规约时用到的符号栈
+        std::vector<Symbol> _stk;
+        // 符号栈顶的终结符
+        decltype(_stk.begin()) _topVt;
 
         // 读取下一个Symbol
         void _next() {
@@ -278,8 +284,60 @@ namespace Compiler {
             }
         }
 
+        // 移进操作
+        inline void _shift() {
+            _stk.push_back(_symbol);
+            _topVt = _stk.end() - 1;
+            _next();
+        }
+
+        /*
+         * 规约操作：寻找最左素短语
+         * 一定有 _topVt > _symbol
+         * 寻找 _topVt 左侧的终结符 reduceLeft ，分为三种情况:
+         * (i)   若 reduceLeft < _topVt => 规约 ( reduceLeft, _stk.end() )
+         * (ii)  若 reduceLeft = _topVt => 规约 [ reduceLeft, _stk.end() )
+         * (iii) 若 reduceLeft > _topVt => 出错
+         */
+        inline std::optional<bool> _reduce() {
+            decltype(_topVt) reduceLeft;
+            for (reduceLeft = _topVt - 1; !_G.isVt(*reduceLeft); --reduceLeft);
+
+            std::vector<Symbol> rule;
+            switch (_precedence[*reduceLeft][*_topVt]) {
+                case Precedence::GREAT:
+                case Precedence::ERROR:
+                    return std::make_optional(false);
+                case Precedence::BELOW: {
+                    rule = std::vector<Symbol>(reduceLeft + 1, _stk.end());
+                    break;
+                }
+                case Precedence::EQUAL: {
+                    rule = std::vector<Symbol>(reduceLeft, _stk.end());
+                    --reduceLeft;
+                    break;
+                }
+            }
+
+            if (!_G.hasUnifiedRule(rule)) {
+                return std::make_optional(false);
+            }
+
+            while (_stk.back() != *reduceLeft) {
+                _stk.pop_back();
+            }
+            _stk.push_back(SYM_VN);
+            for (_topVt = reduceLeft; !_G.isVt(*_topVt); --_topVt);
+
+            if (_symbol == SYM_SEPARATOR && _stk.size() == 2) {
+                return std::make_optional(true);
+            }
+
+            return std::nullopt;
+        }
+
     public:
-        Parser(OPG &g): _G(g) { }
+        Parser(OPG &g): _G(g), _precedence(_G.getPrecedence()) { }
         ~Parser() = default;
 
         // 判断句子 s 是否符合 _G 文法
@@ -288,72 +346,32 @@ namespace Compiler {
             _in.clear();
             _in << s << SYM_SEPARATOR;
 
-            // 符号栈
-            auto stk = std::vector<Symbol>();
-            // 栈顶终结符
-            Symbol topVt;
-
-            stk.push_back(SYM_SEPARATOR);
-            topVt = SYM_SEPARATOR;
-
-            auto p = _G.getPrecedence();
+            _stk.clear();
+            _stk.push_back(SYM_SEPARATOR);
+            _topVt = _stk.begin();
 
             _next();
             while (true) {
-                switch (p[topVt][_symbol]) {
+                switch (_precedence[*_topVt][_symbol]) {
                     // top <= sym => 移进
                     case Precedence::EQUAL:
                     case Precedence::BELOW: {
-                        stk.push_back(_symbol);
-                        topVt = _symbol;
-                        _next();
+                        if (_symbol == SYM_SEPARATOR) {
+                            return false;
+                        }
+
+                        _shift();
                         break;
                     }
                     // top > sym => 规约
                     case Precedence::GREAT: {
-                        auto flag = false;
+                        auto res = _reduce();
 
-                        // 使用统一后的文法进行规约
-                        for (const auto &rule: _G.getUnifiedRules()) {
-                            auto len = rule.size();
-
-                            if (stk.size() < len + 1) {
-                                continue;
-                            }
-
-                            // 将栈顶与每一条文法进行匹配 匹配成功进行规约
-                            auto tmp = std::vector<Symbol>(stk.end() - len, stk.end());
-                            if (tmp == rule) {
-                                while (len--) {
-                                    stk.pop_back();
-                                }
-                                stk.push_back(SYM_VN);
-                                flag = true;
-                                break;
-                            }
+                        if (!res.has_value()) {
+                            break;
+                        } else {
+                            return res.value();
                         }
-
-                        // 规约完成后重新定位topVt
-                        // 找不到文法进行规约 或者 符号栈里的符号小于两个
-                        if (!flag || stk.size() < 2) {
-                            return false;
-                        }
-
-                        // 输入# 且栈内是 [#, Vn] 结束循环
-                        if (_symbol == SYM_SEPARATOR && stk.size() == 2
-                            && _G.isVn(stk.back())) {
-                            return true;
-                        }
-
-                        // 规约之后栈顶一定是非终结符Vn
-                        // 即[#, ..., Vt, Vn]
-                        if (auto vt = stk.at(stk.size() - 2); _G.isVt(vt)) {
-                            topVt = vt;
-                            continue;
-                        }
-                        // 栈顶连续两个Vn报错
-                        // 即[#, ..., Vn, Vn]
-                        return false;
                     }
                     case Precedence::ERROR: {
                         return false;
