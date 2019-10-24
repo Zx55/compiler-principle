@@ -8,12 +8,12 @@
 
     [I/O](Automata/README.md)
 
-- [ ] Syntactic Parser
+- [x] Syntactic Parser
 
     - [x] [Recursive Descent Parser](RDP/RDP.h)
 
         [Gammar and I/O](RDP/README.md)
 
-    - [ ] [Operator-Precedence Gammar Parser](OPG/OPG.h)
+    - [x] [Operator-Precedence Gammar Parser](OPG/OPG.h)
 
         [I/O](OPG/README.md)

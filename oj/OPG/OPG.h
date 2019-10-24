@@ -301,24 +301,17 @@ namespace Compiler {
          */
         inline std::optional<bool> _reduce() {
             decltype(_topVt) reduceLeft;
-            for (reduceLeft = _topVt - 1; !_G.isVt(*reduceLeft); --reduceLeft);
-
-            std::vector<Symbol> rule;
-            switch (_precedence[*reduceLeft][*_topVt]) {
-                case Precedence::GREAT:
-                case Precedence::ERROR:
-                    return std::make_optional(false);
-                case Precedence::BELOW: {
-                    rule = std::vector<Symbol>(reduceLeft + 1, _stk.end());
-                    break;
-                }
-                case Precedence::EQUAL: {
-                    rule = std::vector<Symbol>(reduceLeft, _stk.end());
-                    --reduceLeft;
-                    break;
+            for (reduceLeft = _topVt - 1; ; --reduceLeft) {
+                if (_G.isVt(*reduceLeft)) {
+                    if (_precedence[*reduceLeft][*_topVt] == Precedence::BELOW) {
+                        break;
+                    } else {
+                        _topVt = reduceLeft;
+                    }
                 }
             }
 
+            auto rule = std::vector<Symbol>(reduceLeft + 1, _stk.end());
             if (!_G.hasUnifiedRule(rule)) {
                 return std::make_optional(false);
             }
@@ -327,7 +320,7 @@ namespace Compiler {
                 _stk.pop_back();
             }
             _stk.push_back(SYM_VN);
-            for (_topVt = reduceLeft; !_G.isVt(*_topVt); --_topVt);
+            _topVt = reduceLeft;
 
             if (_symbol == SYM_SEPARATOR && _stk.size() == 2) {
                 return std::make_optional(true);
