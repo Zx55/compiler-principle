@@ -1,0 +1,3 @@
+[submodule "mini"]
+	path = mini
+	url = https://github.com/Zx55/mini-plc0.git

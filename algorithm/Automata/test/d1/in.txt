@@ -1,0 +1,16 @@
+10 1 12
+A B C D E F G H I J
+A
+J
+A "1" B
+B "" C
+B "" E
+B "" G
+C "0" D
+E "1" F
+D "" G
+F "" G
+G "" B
+G "1" H
+H "0" I
+I "1" J

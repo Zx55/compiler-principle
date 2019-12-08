@@ -1,13 +1,23 @@
 # Archive of Compiler 2019 in BUAA
 
-* `lab/` includes a mini c0 compiler in lab
+* `algorithm/` includes several [algorithms](algorithm/README.md) like RDP, OPG
 
-* `oj/` includes several compiling [algorithms](oj/README.md)
-
-    * Writing in **C++17**
+    * C++17
 
     * Using [Catch2](https://github.com/catchorg/Catch2) for unit test
 
-* Final Project [c0-compiler](https://github.com/Zx55/c0-compiler)
+* `mini/` includes a mini plc0 compiler, see [handbook](https://github.com/BUAA-SE-Compiling/miniplc0-handbook/blob/master/Readme.md)
 
-    * Based on `Typescript` + `React` + `Antd`
+    * C++17
+
+    * syntax-directed
+
+    * stack-virtual machine, see [vm-standard](https://github.com/BUAA-SE-Compiling/miniplc0-vm-standards/blob/master/Readme.md) and [toolchain](https://github.com/BUAA-SE-Compiling/miniplc0-toolchain/releases)
+
+* `c0/` includes a compiler for simplified gammar of "C", see [handbook](https://github.com/BUAA-SE-Compiling/c0-handbook)
+
+    * C++17
+
+    * AST-based analyser
+
+    * stack-virtual machine, see [vm-standard](https://github.com/BUAA-SE-Compiling/c0-vm-standards)
