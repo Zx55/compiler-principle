@@ -2,5 +2,5 @@
 	path = mini
 	url = https://github.com/Zx55/mini-plc0.git
 [submodule "c0-cli"]
-    path = c0-cli
-    url = https://github.com/Zx55/c0-cli.git
+	path = c0-cli
+	url = https://github.com/Zx55/c0-cli.git
