@@ -14,7 +14,7 @@
 
     * stack-virtual machine, see [vm-standard](https://github.com/BUAA-SE-Compiling/miniplc0-vm-standards/blob/master/Readme.md) and [toolchain](https://github.com/BUAA-SE-Compiling/miniplc0-toolchain/releases)
 
-* `c0/` includes a compiler for simplified gammar of "C", see [handbook](https://github.com/BUAA-SE-Compiling/c0-handbook)
+* `c0-cli/` includes a compiler for simplified gammar of "C", see [handbook](https://github.com/BUAA-SE-Compiling/c0-handbook)
 
     * C++17
 
